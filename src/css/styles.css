@@ -11,14 +11,14 @@ main {
 
 
 /* === Search Form === */
-.search-form {
+.form {
   display: flex;
   gap: 12px;
   justify-content: center;
   margin: 40px 0;
 }
 
-.search-form input[type="text"] {
+.form input[type="text"] {
   padding: 12px 20px;
   border: 2px solid #bbb;
   border-radius: 8px;
@@ -27,11 +27,11 @@ main {
   transition: border 0.2s ease;
 }
 
-.search-form input[type="text"]:hover {
+.form input[type="text"]:hover {
   border-color: #000;
 }
 
-.search-form input[type="text"]:focus {
+.form input[type="text"]:focus {
   border-color: #3a6ff8;
 }
 

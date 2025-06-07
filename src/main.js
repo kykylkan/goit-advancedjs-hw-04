@@ -1,8 +1,9 @@
-
 import { fetchImages } from './js/pixabay-api';
 import { renderImages } from './js/render-functions';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
 
 const form = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
@@ -22,14 +23,24 @@ form.addEventListener('submit', async e => {
   page = 1;
   query = e.target.elements.searchQuery.value.trim();
 
-  if (!query) return;
+  if (!query) {
+    iziToast.warning({
+      message: 'Please enter a search query!',
+      position: 'topRight',
+    });
+    loader.classList.add('hidden');
+    return;
+  }
 
   try {
     const data = await fetchImages(query, page);
     totalHits = data.totalHits;
 
     if (data.hits.length === 0) {
-      gallery.innerHTML = '<p>No images found.</p>';
+      iziToast.info({
+        message: 'Sorry, no images match your search query. Try again!',
+        position: 'topRight',
+      });
       return;
     }
 
@@ -41,8 +52,17 @@ form.addEventListener('submit', async e => {
     } else {
       loadMoreBtn.classList.remove('hidden');
     }
+
+    iziToast.success({
+      message: `Found ${totalHits} images.`,
+      position: 'topRight',
+    });
   } catch (err) {
     console.error(err);
+    iziToast.error({
+      message: 'Something went wrong. Please try again later.',
+      position: 'topRight',
+    });
   } finally {
     loader.classList.add('hidden');
   }
@@ -68,13 +88,17 @@ loadMoreBtn.addEventListener('click', async () => {
 
     if (page * 15 >= totalHits) {
       loadMoreBtn.classList.add('hidden');
-      gallery.insertAdjacentHTML(
-        'beforeend',
-        '<p class="end-message">We\'re sorry, but you\'ve reached the end of search results.</p>'
-      );
+      iziToast.info({
+        message: "We're sorry, but you've reached the end of search results.",
+        position: 'topRight',
+      });
     }
   } catch (err) {
     console.error(err);
+    iziToast.error({
+      message: 'Error while loading more images.',
+      position: 'topRight',
+    });
   } finally {
     loader.classList.add('hidden');
   }
